@@ -12,65 +12,121 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.os.Bundle;
 
+import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 
 public class MainActivity extends AppCompatActivity {
 
-
-
-
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+    public void mailSend(View v)
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    {
+        Multipart _multipart = new MimeMultipart();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        // Recipient's email ID needs to be mentioned.
+        String to = "pancake2305@gmail.com";//change accordingly
+
+        // Sender's email ID needs to be mentioned
+        String from = "pancake2305@gmail.com";//change accordingly
+        final String username = "pancake2305";//change accordingly
+        final String password = "killer2305";//change accordingly
+
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+
+        // Get the Session object.
+        Session session = Session.getInstance(props,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
+
+        try {
+            // Create a default MimeMessage object.
+            Message message = new MimeMessage(session);
+
+            //DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), "text/plain"));
+
+            // message.setDataHandler(handler);
+
+            // Set From: header field of the header.
+
+            message.setFrom(new InternetAddress(from));
+
+
+            // Set To: header field of the header.
+
+            message.setRecipients(Message.RecipientType.TO,
+                    InternetAddress.parse(to));
+
+
+            // Set Subject: header field
+
+            message.setSubject("Testing Subject");
+
+
+            BodyPart messageBodyPart = new MimeBodyPart();
+
+
+            messageBodyPart.setText("Hello, this is the summary.");
+
+
+            _multipart.addBodyPart(messageBodyPart);
+
+
+            //DataSource source = new FileDataSource(Environment.getExternalStorageDirectory().getPath()+"/image.jpg");
+
+            DataSource source = new FileDataSource("drone.jpg");
+
+
+            messageBodyPart.setDataHandler(new DataHandler(source));
+
+
+            messageBodyPart.setFileName("download image");
+
+
+            _multipart.addBodyPart(messageBodyPart);
+
+            message.setContent(_multipart);
+
+            // Send message
+            Transport.send(message);
+
+
+        } catch (MessagingException e1) {
+            e1.printStackTrace();
         }
-
-        return super.onOptionsItemSelected(item);
     }
+}
 
 
 
 
 
-    public void runEmail(View v){
-
-
-        new Thread(new Runnable() {
-
-            public void run() {
-
-                try {
-
-                    sendMail sender = new sendMail();
-
-                } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
-                }
-            }
-        }).start();
-    }
-    }
 
 
 

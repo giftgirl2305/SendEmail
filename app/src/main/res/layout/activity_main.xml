@@ -8,11 +8,11 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send"
+        android:text="@string/send_button"
         android:id="@+id/send"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:onClick="runEmail"
+        android:onClick="mailSend"
         android:nestedScrollingEnabled="false" />
 
 </RelativeLayout>

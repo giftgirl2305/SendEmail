@@ -24,112 +24,102 @@ import java.util.Properties;
 
 
 public class sendMail {
-    private Multipart _multipart = new MimeMultipart();
 
-    // Recipient's email ID needs to be mentioned.
-    String to = "pancake2305@gmail.com";//change accordingly
+    public void mailSend()
 
-    // Sender's email ID needs to be mentioned
-    String from = "suavereport@gmail.com";//change accordingly
-    final String username = "suavereport";//change accordingly
-    final String password = "se300project";//change accordingly
+    {
+        Multipart _multipart = new MimeMultipart();
 
-    // Assuming you are sending email through relay.jangosmtp.net
-    String host = "smtp.gmail.com";
+        // Recipient's email ID needs to be mentioned.
+        String to = "pancake2305@gmail.com";//change accordingly
 
-    Properties props = new Properties();
-    props.put("mail.smtp.auth", "true");
-    props.put("mail.smtp.starttls.enable", "true");
-    props.put("mail.smtp.host", host);
-    props.put("mail.smtp.port", "587");
+        // Sender's email ID needs to be mentioned
+        String from = "suavereport@gmail.com";//change accordingly
+        final String username = "suavereport";//change accordingly
+        final String password = "se300project";//change accordingly
 
-    // Get the Session object.
-    Session session = Session.getInstance(props,
-            new javax.mail.Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(username, password);
-                }
-            });
+        // Assuming you are sending email through relay.jangosmtp.net
+        String mailhost = "smtp.gmail.com";
 
-    try {
-        // Create a default MimeMessage object.
-        Message message = new MimeMessage(session);
+        Properties props = new Properties();
+        props.setProperty("mail.transport.protocol", "smtp");
+        props.setProperty("mail.host", mailhost);
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.port", "465");
+        props.put("mail.smtp.socketFactory.port", "465");
+        props.put("mail.smtp.socketFactory.class",
+                "javax.net.ssl.SSLSocketFactory");
+        props.put("mail.smtp.socketFactory.fallback", "false");
+        props.setProperty("mail.smtp.quitwait", "false");
 
-        //DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), "text/plain"));
+        // Get the Session object.
+        Session session = Session.getInstance(props,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
 
-       // message.setDataHandler(handler);
-
-        // Set From: header field of the header.
         try {
-            message.setFrom(new InternetAddress(from));
+            // Create a default MimeMessage object.
+            Message message = new MimeMessage(session);
+
+            //DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), "text/plain"));
+
+            // message.setDataHandler(handler);
+
+            // Set From: header field of the header.
+
+                message.setFrom(new InternetAddress(from));
+
+
+            // Set To: header field of the header.
+
+                message.setRecipients(Message.RecipientType.TO,
+                        InternetAddress.parse(to));
+
+
+            // Set Subject: header field
+
+                message.setSubject("Testing Subject");
+
+
+            BodyPart messageBodyPart = new MimeBodyPart();
+
+
+                messageBodyPart.setText("Hello, this is the summary.");
+
+
+
+                _multipart.addBodyPart(messageBodyPart);
+
+
+            //DataSource source = new FileDataSource(Environment.getExternalStorageDirectory().getPath()+"/image.jpg");
+
+            DataSource source = new FileDataSource("drone.jpg");
+
+
+                messageBodyPart.setDataHandler(new DataHandler(source));
+
+
+
+                messageBodyPart.setFileName("download image");
+
+            //this is a comment i am adding for no reason
+
+                _multipart.addBodyPart(messageBodyPart);
+
+            // Send message
+
+                Transport.send(message);
+
+
+            System.out.println("Sent message successfully....");
+
         } catch (MessagingException e1) {
             e1.printStackTrace();
         }
-
-        // Set To: header field of the header.
-        try {
-            message.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(to));
-        } catch (MessagingException e1) {
-            e1.printStackTrace();
-        }
-
-        // Set Subject: header field
-        try {
-            message.setSubject("Testing Subject");
-        } catch (MessagingException e1) {
-            e1.printStackTrace();
-        }
-
-        BodyPart messageBodyPart = new MimeBodyPart();
-
-        try {
-            messageBodyPart.setText("Hello, this is the summary.");
-        } catch (MessagingException e1) {
-            e1.printStackTrace();
-        }
-
-        try {
-            _multipart.addBodyPart(messageBodyPart);
-        } catch (MessagingException e1) {
-            e1.printStackTrace();
-        }
-
-        //DataSource source = new FileDataSource(Environment.getExternalStorageDirectory().getPath()+"/image.jpg");
-
-        DataSource source = new FileDataSource("Downloads/drone.jpg");
-
-        try {
-            messageBodyPart.setDataHandler(new DataHandler(source));
-        } catch (MessagingException e1) {
-            e1.printStackTrace();
-        }
-
-        try {
-            messageBodyPart.setFileName("download image");
-        } catch (MessagingException e1) {
-            e1.printStackTrace();
-        }
-
-        try {
-            _multipart.addBodyPart(messageBodyPart);
-        } catch (MessagingException e1) {
-            e1.printStackTrace();
-        }
-
-        // Send message
-        try {
-            Transport.send(message);
-        } catch (MessagingException e1) {
-            e1.printStackTrace();
-        }
-
-        System.out.println("Sent message successfully....");
-
-    } catch(MessagingException e1){
-        e1.printStackTrace();
     }
-
 }
 
 
